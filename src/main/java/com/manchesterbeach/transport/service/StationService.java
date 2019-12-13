@@ -34,7 +34,6 @@ public class StationService {
 
         allStations = allStations.stream().filter(oneStation -> oneStation.getId().equals(id)).collect(Collectors.toList());
 
-
         if(allStations.size() < 1){
             return null;
         }

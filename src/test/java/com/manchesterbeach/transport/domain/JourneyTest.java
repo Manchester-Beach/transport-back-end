@@ -14,12 +14,11 @@ public class JourneyTest {
         Station expectedDestinationStation = new Station("LIV", "Liverpool Lime Street");
 
         //when
-        Journey journey = new Journey("John Smith",
+        Journey journey = new Journey(
                 new Station("MAN", "Manchester Piccadilly"),
                 new Station("LIV", "Liverpool Lime Street"));
 
         //then
-        assertThat(journey.getName()).isEqualTo(expectedName);
         assertThat(journey.getOriginStation()).isEqualTo(expectedOriginStation);
         assertThat(journey.getDestinationStation()).isEqualTo(expectedDestinationStation);
     }
