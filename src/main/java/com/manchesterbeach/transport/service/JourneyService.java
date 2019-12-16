@@ -2,6 +2,7 @@ package com.manchesterbeach.transport.service;
 
 import com.manchesterbeach.transport.domain.Journey;
 import com.manchesterbeach.transport.domain.Station;
+import com.manchesterbeach.transport.repo.JourneyRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -18,14 +19,29 @@ public class JourneyService {
     @Autowired
     private RestTemplate restTemplate;
 
-    private List<Journey> journeyList = new ArrayList();
+    @Autowired
+    private JourneyRepo journeyRepo;
 
-    public ResponseEntity saveJourney(Station originStation, Station destinationStation) throws URISyntaxException {
+    @Autowired
+    private StationService stationService;
+
+    public ResponseEntity saveJourney(String originCrs, String destinationCrs) throws URISyntaxException {
         URI uri = new URI("/journeys");
 
-        journeyList.add(new Journey(originStation, destinationStation));
-        System.out.println("Journey added: #" + journeyList.size());
+        Station originStation = stationService.getOneStation(originCrs);
+        Station destinationStation = stationService.getOneStation(destinationCrs);
+
+        if(originStation == null || destinationStation == null){
+            return ResponseEntity.badRequest().build();
+        }
+
+        journeyRepo.addNewJourney(new Journey(originStation, destinationStation));
+        System.out.println("Journey added, count is now: " + journeyRepo.getJourneyListSize());
 
         return ResponseEntity.created(uri).build();
+    }
+
+    public List<Journey> getAllJourneys() {
+        return journeyRepo.getJourneyList();
     }
 }

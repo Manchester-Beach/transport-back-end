@@ -15,5 +15,13 @@ public class JourneyServiceTest {
     @InjectMocks
     private JourneyService journeyService;
 
+    @Test
+    public void shouldGetAllJourneys(){
+        //given
+        String uri = "/journeys";
 
+        //when
+
+        //then
+    }
 }

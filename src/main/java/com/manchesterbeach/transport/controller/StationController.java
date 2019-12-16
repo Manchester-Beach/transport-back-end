@@ -22,15 +22,15 @@ public class StationController {
     @GetMapping(value = "/stations")
     public ResponseEntity<Map<String, List<Station>>> getAllStations(){
         List<Station> response = stationService.getAllStations();
-        Map<String, List<Station>> responseBody = new HashMap<>();
+        Map<String, List<Station>> jsonResponseBody = new HashMap<>();
 
         if(response == null){
-            return new ResponseEntity<>(responseBody, HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(jsonResponseBody, HttpStatus.NO_CONTENT);
         }
 
-        responseBody.put("stations", response);
+        jsonResponseBody.put("stations", response);
 
-        return new ResponseEntity<>(responseBody, HttpStatus.OK);
+        return new ResponseEntity<>(jsonResponseBody, HttpStatus.OK);
     }
 
     @GetMapping(value = "/stations/{id}")
