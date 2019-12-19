@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@CrossOrigin("http://localhost:3000")
 @RestController
 public class JourneyController {
 
@@ -29,7 +30,6 @@ public class JourneyController {
                 ResponseEntity.created(uri).build() : ResponseEntity.badRequest().build();
     }
 
-    @CrossOrigin("http://localhost:3000")
     @GetMapping(value = "/journeys", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, List<Journey>>> getAllJourneys() {
         List<Journey> response = journeyService.getAllJourneys();
