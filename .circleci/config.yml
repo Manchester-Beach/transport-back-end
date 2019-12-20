@@ -7,5 +7,6 @@
         JVM_OPTS: -Xmx3200m
       steps:
         - checkout # check out the code in the project directory
-        - run: echo "hello world" # run the `echo` command
-        - run: ./gradlew clean build
+        - run:
+          name: "Building application"
+          command: ./gradlew clean build
