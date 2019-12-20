@@ -37,7 +37,7 @@ public class ScheduledJourneyControllerTest {
         String uri = "/scheduledJourneys/MCV/BYM";
         Station departureStation = new Station("MCV", "Manchester Victoria");
         Station arrivalStation = new Station("BYM", "Burnley Manchester Road");
-        ScheduledJourney scheduledJourney = new ScheduledJourney(departureStation, arrivalStation, "17:04", "17:24", "6", "17:51");
+        ScheduledJourney scheduledJourney = new ScheduledJourney(departureStation, arrivalStation, "17:04", "17:24", "6", "17:51", false);
         when(scheduledJourneyService.getJourneyDetails(departureStation, arrivalStation)).thenReturn(scheduledJourney);
         when(stationService.getOneStation("MCV")).thenReturn(departureStation);
         when(stationService.getOneStation("BYM")).thenReturn(arrivalStation);
