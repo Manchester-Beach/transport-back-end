@@ -8,5 +8,5 @@
       steps:
         - checkout # check out the code in the project directory
         - run:
-          name: "Building application"
-          command: ./gradlew clean build
+            name: "Building application"
+            command: ./gradlew clean build
