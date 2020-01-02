@@ -29,8 +29,8 @@ public class StationServiceTest {
         //given
         String uri = "https://trains.mcrlab.co.uk/stations";
         Station[] expectedStations = new Station[]{
-            new Station("123", "Manchester Piccadilly"),
-            new Station("124", "Liverpool Lime Street")
+            new Station("123", "Manchester Piccadilly", 1, 1),
+            new Station("124", "Liverpool Lime Street", 1, 1)
         };
 
         ResponseEntity<Station[]> expectedResponse = new ResponseEntity<>(expectedStations, HttpStatus.OK);

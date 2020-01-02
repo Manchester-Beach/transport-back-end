@@ -30,8 +30,8 @@ class ScheduledJourneyServiceTest {
     public void shouldGetScheduledJourneyDetailsFromStations() {
         //given
         ScheduledJourneyService mockService = spy(scheduledJourneyService);
-        Station originStation = new Station("LIV", "Liverpool Lime Street");
-        Station destinationStation = new Station("MCV", "Manchester Victoria");
+        Station originStation = new Station("LIV", "Liverpool Lime Street", 0, 0);
+        Station destinationStation = new Station("MCV", "Manchester Victoria", 0, 0);
         String url = String.format("https://trains.mcrlab.co.uk/next/%s/%s", originStation.getId(), destinationStation.getId());
         ScheduledJourney scheduledJourney = new ScheduledJourney(originStation, destinationStation, "5", "17:04", "17:24", "18:00", false);
         when(restTemplate.getForEntity(url, String.class)).thenReturn(new ResponseEntity<>("", HttpStatus.OK));

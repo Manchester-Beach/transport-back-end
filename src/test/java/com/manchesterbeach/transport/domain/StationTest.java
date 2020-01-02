@@ -13,7 +13,7 @@ public class StationTest {
         String expectedName = "Manchester Piccadilly";
 
         //when
-        Station station = new Station("MAN", "Manchester Piccadilly");
+        Station station = new Station("MAN", "Manchester Piccadilly", 0, 0);
 
         //then
         assertThat(station.getId()).isEqualTo(expectedId);

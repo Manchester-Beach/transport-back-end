@@ -10,13 +10,13 @@ public class JourneyTest {
     public void journeyShouldHaveProperties(){
         //given
         String expectedName = "John Smith";
-        Station expectedOriginStation = new Station("MAN", "Manchester Piccadilly");
-        Station expectedDestinationStation = new Station("LIV", "Liverpool Lime Street");
+        Station expectedOriginStation = new Station("MAN", "Manchester Piccadilly", 0, 0);
+        Station expectedDestinationStation = new Station("LIV", "Liverpool Lime Street", 0, 0);
 
         //when
         Journey journey = new Journey(
-                new Station("MAN", "Manchester Piccadilly"),
-                new Station("LIV", "Liverpool Lime Street"));
+                new Station("MAN", "Manchester Piccadilly", 0, 0),
+                new Station("LIV", "Liverpool Lime Street", 0, 0));
 
         //then
         assertThat(journey.getOriginStation()).isEqualTo(expectedOriginStation);

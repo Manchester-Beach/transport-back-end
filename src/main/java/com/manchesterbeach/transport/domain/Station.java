@@ -17,6 +17,8 @@ public class Station {
     @JsonProperty("crs")
     private String id;
     private String name;
+    private double lat;
+    private double lon;
 
     @Override
     public boolean equals(Object o) {

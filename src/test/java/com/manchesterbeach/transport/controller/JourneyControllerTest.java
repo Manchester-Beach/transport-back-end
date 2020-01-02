@@ -38,8 +38,8 @@ public class JourneyControllerTest {
     @Test
     public void shouldPostJourney() throws Exception {
         //given
-        Station origin = new Station("MAN", "Manchester Piccadilly");
-        Station destination = new Station("LIV", "Liverpool Lime Street");
+        Station origin = new Station("MAN", "Manchester Piccadilly", 0, 0);
+        Station destination = new Station("LIV", "Liverpool Lime Street", 0, 0);
 
         Journey expectedJourney = new Journey(origin, destination);
 
@@ -47,7 +47,7 @@ public class JourneyControllerTest {
         String expectedJourneyJson = "{" +
                 " \"origin\": \"MAN\"," +
                 " " +
-                "\"destination\": \"LIV\" " +
+                "\"destination\": \"LIV\", \"lat\": 0, \"lon\": 0 " +
                 "}";
         URI uri = new URI("/journeys");
 

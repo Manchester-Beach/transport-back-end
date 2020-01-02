@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,7 +23,12 @@ public class StationService {
 
         ResponseEntity<Station[]> response = restTemplate.getForEntity(uri, Station[].class);
 
-        return response.getStatusCode() == HttpStatus.OK ? Arrays.asList(response.getBody()) : null;
+        ArrayList<Station> filtered = (ArrayList<Station>) Arrays.asList(response.getBody()).stream().distinct()
+                .filter(station -> station.getLat() != 0)
+                .filter(station -> !station.getName().contains("(Bus)"))
+                .collect(Collectors.toList());
+
+        return response.getStatusCode() == HttpStatus.OK ? filtered : null;
     }
 
     public Station getOneStation(String id) {

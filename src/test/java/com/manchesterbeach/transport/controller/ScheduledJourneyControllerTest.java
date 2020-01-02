@@ -35,8 +35,8 @@ public class ScheduledJourneyControllerTest {
     public void shouldReturnJourneyDetailsFromRequest() throws Exception {
         // given
         String uri = "/scheduledJourneys/MCV/BYM";
-        Station departureStation = new Station("MCV", "Manchester Victoria");
-        Station arrivalStation = new Station("BYM", "Burnley Manchester Road");
+        Station departureStation = new Station("MCV", "Manchester Victoria", 0, 0);
+        Station arrivalStation = new Station("BYM", "Burnley Manchester Road", 0, 0);
         ScheduledJourney scheduledJourney = new ScheduledJourney(departureStation, arrivalStation, "17:04", "17:24", "6", "17:51", false);
         when(scheduledJourneyService.getJourneyDetails(departureStation, arrivalStation)).thenReturn(scheduledJourney);
         when(stationService.getOneStation("MCV")).thenReturn(departureStation);

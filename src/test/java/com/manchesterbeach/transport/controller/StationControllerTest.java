@@ -34,9 +34,9 @@ public class StationControllerTest {
         String uri = "/stations";
         List<Station> expectedStations = new ArrayList<Station>(
             Arrays.asList(
-                new Station("MAN", "Manchester Piccadilly"),
-                new Station("LIV", "Liverpool Lime Street"),
-                new Station("LDS", "Leeds")
+                new Station("MAN", "Manchester Piccadilly", 0, 0),
+                new Station("LIV", "Liverpool Lime Street", 0, 0),
+                new Station("LDS", "Leeds", 0, 0)
             ));
 
         String jsonStationList = objectMapper.writeValueAsString(expectedStations);
@@ -72,7 +72,7 @@ public class StationControllerTest {
         //given
         String stationId = "MAN";
         String stationName = "Manchester Piccadilly";
-        Station expectedStation = new Station(stationId, stationName);
+        Station expectedStation = new Station(stationId, stationName, 0, 0);
         String stationAsString = objectMapper.writeValueAsString(expectedStation);
         String uri = String.format("/stations/%s", stationId);
 

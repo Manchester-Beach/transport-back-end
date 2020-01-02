@@ -30,9 +30,9 @@ public class JourneyRepoTest {
         MockitoAnnotations.initMocks(this);
 
         journeyList = new ArrayList<>(Arrays.asList(
-                new Journey(new Station("MAN", "Manchester Piccadilly"), new Station("LIV", "Liverpool Lime Street")),
-                new Journey(new Station("MAN", "Manchester Piccadilly"), new Station("LDS", "Leeds")),
-                new Journey(new Station("LIV", "Liverpool Lime Street"), new Station("EDG", "Edge Hill"))
+                new Journey(new Station("MAN", "Manchester Piccadilly", 0, 0), new Station("LIV", "Liverpool Lime Street", 0, 0)),
+                new Journey(new Station("MAN", "Manchester Piccadilly", 0, 0), new Station("LDS", "Leeds", 0, 0)),
+                new Journey(new Station("LIV", "Liverpool Lime Street", 0, 0), new Station("EDG", "Edge Hill", 0, 0))
         ));
     }
 

@@ -53,8 +53,8 @@ public class ScheduledJourneyService {
         String platformNo = jobject.get("platform").getAsString();
         Boolean cancelled = jobject.get("isCancelled").getAsBoolean();
 
-        Station origin = new Station(originStnCrs, originStn);
-        Station destination = new Station(destStnCrs, destStn);
+        Station origin = new Station(originStnCrs, originStn, 0, 0);
+        Station destination = new Station(destStnCrs, destStn, 0, 0);
 
         return new ScheduledJourney(origin, destination, platformNo, intendedTime, estimatedTime, estimatedArrival, cancelled);
     }
