@@ -17,10 +17,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(JourneyController.class)
@@ -86,5 +84,30 @@ public class JourneyControllerTest {
 
         //then
         assertThat(response).contains(jsonJourneyList);
+    }
+
+    @Test
+    public void shouldDeleteJourneyOnRequest() throws Exception {
+        //given
+        int journeyIndex = 2;
+        String uri = String.format("/journeys/%s", journeyIndex);
+
+        ArrayList journeys = new ArrayList<>(
+                Arrays.asList(
+                        new Journey(),
+                        new Journey(),
+                        new Journey(),
+                        new Journey()
+                )
+        );
+
+        when(journeyService.deleteJourney(journeyIndex)).thenReturn(ResponseEntity.ok().build());
+
+        //when
+        mockMvc.perform(delete(uri)).andExpect(status().isOk());
+
+        //then
+        verify(journeyService).deleteJourney(journeyIndex);
+        verifyNoMoreInteractions(journeyService);
     }
 }

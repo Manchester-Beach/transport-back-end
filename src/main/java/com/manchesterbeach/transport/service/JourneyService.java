@@ -44,4 +44,15 @@ public class JourneyService {
     public List<Journey> getAllJourneys() {
         return journeyRepo.getJourneyList();
     }
+
+    public ResponseEntity deleteJourney(int journeyIndex) {
+        Journey journeyToDelete = journeyRepo.getJourneyByIndex(journeyIndex);
+
+        if(journeyToDelete == null){
+            return ResponseEntity.badRequest().build();
+        }
+
+        return journeyRepo.deleteJourney(journeyToDelete);
+
+    }
 }

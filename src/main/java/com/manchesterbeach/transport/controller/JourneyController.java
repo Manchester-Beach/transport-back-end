@@ -44,4 +44,15 @@ public class JourneyController {
 
         return new ResponseEntity<>(jsonResponseBody, HttpStatus.OK);
     }
+
+    @CrossOrigin("http://localhost:3000")
+    @DeleteMapping(value = "/journeys/{index}")
+    public ResponseEntity<Object> deleteJourney(@PathVariable int index){
+        ResponseEntity response = journeyService.deleteJourney(index);
+
+        return response.getStatusCode() == HttpStatus.OK ?
+                ResponseEntity.ok().build() :
+                ResponseEntity.badRequest().build() ;
+
+    }
 }
