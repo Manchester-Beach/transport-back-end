@@ -34,18 +34,18 @@ public class ScheduledJourneyControllerTest {
     @Test
     public void shouldReturnJourneyDetailsFromRequest() throws Exception {
         // given
-        String uri = "/scheduledJourneys/MCV/BYM";
+        String uri = "/scheduledJourneys/MCV/BYM/0";
         Station departureStation = new Station("MCV", "Manchester Victoria", 0, 0);
         Station arrivalStation = new Station("BYM", "Burnley Manchester Road", 0, 0);
         ScheduledJourney scheduledJourney = new ScheduledJourney(departureStation, arrivalStation, "17:04", "17:24", "6", "17:51", false);
-        when(scheduledJourneyService.getJourneyDetails(departureStation, arrivalStation)).thenReturn(scheduledJourney);
+        when(scheduledJourneyService.getJourneyDetails(departureStation, arrivalStation, 0)).thenReturn(scheduledJourney);
         when(stationService.getOneStation("MCV")).thenReturn(departureStation);
         when(stationService.getOneStation("BYM")).thenReturn(arrivalStation);
         String journeyJSON = objectMapper.writeValueAsString(scheduledJourney);
         // when
         String response = mockMvc.perform(get(uri)).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
         // then
-        verify(scheduledJourneyService).getJourneyDetails(departureStation, arrivalStation);
+        verify(scheduledJourneyService).getJourneyDetails(departureStation, arrivalStation, 0);
         verifyNoMoreInteractions(scheduledJourneyService);
         assertThat(response).isEqualTo(journeyJSON);
     }

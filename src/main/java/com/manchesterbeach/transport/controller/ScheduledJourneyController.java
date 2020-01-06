@@ -27,12 +27,14 @@ public class ScheduledJourneyController {
     @Autowired
     ObjectMapper objectMapper;
 
-    @GetMapping(value="/scheduledJourneys/{origin}/{destination}")
-    public ResponseEntity getScheduledJourney(@PathVariable("origin") String origin, @PathVariable("destination") String destination) {
+    @GetMapping(value="/scheduledJourneys/{origin}/{destination}/{index}")
+    public ResponseEntity getScheduledJourney(@PathVariable("origin") String origin,
+                                              @PathVariable("destination") String destination,
+                                              @PathVariable("index") int journeyIndex) {
         Station originStation = stationService.getOneStation(origin);
         Station destinationStation = stationService.getOneStation(destination);
 
-        ScheduledJourney scheduledJourney = scheduledJourneyService.getJourneyDetails(originStation, destinationStation);
+        ScheduledJourney scheduledJourney = scheduledJourneyService.getJourneyDetails(originStation, destinationStation, journeyIndex);
         if (scheduledJourney == null) {
             return new ResponseEntity(new EmptyJsonResponse(), HttpStatus.OK);
         }

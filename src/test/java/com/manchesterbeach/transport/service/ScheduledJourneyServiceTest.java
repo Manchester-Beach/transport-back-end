@@ -35,10 +35,10 @@ class ScheduledJourneyServiceTest {
         String url = String.format("https://trains.mcrlab.co.uk/next/%s/%s", originStation.getId(), destinationStation.getId());
         ScheduledJourney scheduledJourney = new ScheduledJourney(originStation, destinationStation, "5", "17:04", "17:24", "18:00", false);
         when(restTemplate.getForEntity(url, String.class)).thenReturn(new ResponseEntity<>("", HttpStatus.OK));
-        doReturn(scheduledJourney).when(mockService).jsonResponseAsJourney(anyString());
+        doReturn(scheduledJourney).when(mockService).jsonResponseAsJourney(anyString(), anyInt());
 
         //when
-        ScheduledJourney response = mockService.getJourneyDetails(originStation, destinationStation);
+        ScheduledJourney response = mockService.getJourneyDetails(originStation, destinationStation, 0);
 
         //then
         assertThat(response).isEqualTo(scheduledJourney);

@@ -18,27 +18,29 @@ public class ScheduledJourneyService {
     @Autowired
     RestTemplate restTemplate;
 
-    public ScheduledJourney getJourneyDetails(Station departureStation, Station arrivalStation) {
+    public ScheduledJourney getJourneyDetails(Station departureStation, Station arrivalStation, int journeyIndex) {
         String url = String.format("https://trains.mcrlab.co.uk/next/%s/%s", departureStation.getId(), arrivalStation.getId());
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         if (response.getStatusCode() != HttpStatus.OK) {
             return null;
         }
-        return jsonResponseAsJourney(response.getBody());
+
+        //journey index is the (n - 1)th journey to retrieve,
+        return jsonResponseAsJourney(response.getBody(), journeyIndex);
     }
 
-    public ScheduledJourney jsonResponseAsJourney(String json){
+    public ScheduledJourney jsonResponseAsJourney(String json, int journeyIndex){
         Gson g = new Gson();
 
         JsonElement jelement = g.fromJson(json, JsonElement.class);
         JsonObject jobject = jelement.getAsJsonObject();
         JsonArray jarray = jobject.getAsJsonArray("departures");
-
+        System.out.println(jarray.size());
         if(jarray.size() <= 0){
             return null;
         }
 
-        jobject = jarray.get(0).getAsJsonObject();
+        jobject = jarray.get(journeyIndex).getAsJsonObject();
 
         JsonObject originStation = jobject.getAsJsonObject("origin");
         String originStn = originStation.get("name").getAsString();
