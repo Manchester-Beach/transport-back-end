@@ -22,6 +22,7 @@ public class ScheduledJourneyService {
         String url = String.format("https://trains.mcrlab.co.uk/next/%s/%s", departureStation.getId(), arrivalStation.getId());
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         if (response.getStatusCode() != HttpStatus.OK) {
+            System.out.println("There's a problem: " + response.getStatusCode());
             return null;
         }
 
@@ -35,8 +36,12 @@ public class ScheduledJourneyService {
         JsonElement jelement = g.fromJson(json, JsonElement.class);
         JsonObject jobject = jelement.getAsJsonObject();
         JsonArray jarray = jobject.getAsJsonArray("departures");
-        System.out.println(jarray.size());
+
         if(jarray.size() <= 0){
+            return null;
+        }
+
+        if(journeyIndex >= jarray.size()){
             return null;
         }
 
