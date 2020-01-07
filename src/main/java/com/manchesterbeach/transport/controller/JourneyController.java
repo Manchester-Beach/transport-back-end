@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@CrossOrigin("http://localhost:3000")
+@CrossOrigin(origins = {"http://localhost:3000", "http://beach-train-app.herokuapp.com"})
 @RestController
 public class JourneyController {
 
@@ -45,7 +45,7 @@ public class JourneyController {
         return new ResponseEntity<>(jsonResponseBody, HttpStatus.OK);
     }
 
-    @CrossOrigin("http://localhost:3000")
+    @CrossOrigin(origins = {"http://localhost:3000", "http://beach-train-app.herokuapp.com"})
     @DeleteMapping(value = "/journeys/{index}")
     public ResponseEntity<Object> deleteJourney(@PathVariable int index){
         ResponseEntity response = journeyService.deleteJourney(index);
