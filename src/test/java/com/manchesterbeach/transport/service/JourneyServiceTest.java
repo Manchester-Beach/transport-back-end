@@ -41,13 +41,13 @@ public class JourneyServiceTest {
         int journeyIndex = 0;
         Journey journeyToDelete = new Journey();
 
-        when(journeyRepo.getJourneyByIndex(journeyIndex)).thenReturn(journeyToDelete);
-        when(journeyRepo.deleteJourney(journeyToDelete)).thenReturn(ResponseEntity.ok().build());
+        when(journeyRepo.findById(Long.valueOf(journeyIndex))).thenReturn(journeyToDelete);
+        when(journeyRepo.delete(journeyToDelete)).thenReturn(ResponseEntity.ok().build());
 
         //when
         ResponseEntity response = journeyService.deleteJourney(journeyIndex);
 
         //then
-        verify(journeyRepo).deleteJourney(journeyToDelete);
+        verify(journeyRepo).delete(journeyToDelete);
     }
 }

@@ -6,35 +6,46 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Repository
-public class JourneyRepo {
+public class JourneyRepo implements CrudRepo<Journey> {
 
     private List<Journey> journeyList = new ArrayList<>();
 
-    public void addNewJourney(Journey journey){
-        getJourneyList().add(journey);
+    @Override
+    public void save(Journey journey){
+        findAll().add(journey);
     }
 
-    public int getJourneyListSize(){
-        return getJourneyList().size();
-    }
-
-    public List<Journey> getJourneyList() {
+    @Override
+    public List<Journey> findAll() {
         return journeyList;
     }
 
-    public Journey getJourneyByIndex(int journeyIndex) {
+    @Override
+    public Journey findById(Long journeyIndex) {
 
-        if(journeyIndex >= getJourneyList().size() || journeyIndex < 0){
+        if(journeyIndex >= findAll().size() || journeyIndex < 0){
             return null;
         }
 
-        return getJourneyList().get(journeyIndex);
+        return findAll().get(journeyIndex.intValue());
     }
 
-    public ResponseEntity deleteJourney(Journey journeyToDelete) {
+    @Override
+    public ResponseEntity delete(Journey journeyToDelete) {
         journeyList.remove(journeyToDelete);
         return ResponseEntity.ok().build();
+    }
+
+    @Override
+    public void deleteById(Long id) {
+
+    }
+
+    @Override
+    public int count() {
+        return findAll().size();
     }
 }

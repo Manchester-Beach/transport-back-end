@@ -2,6 +2,7 @@ package com.manchesterbeach.transport.service;
 
 import com.manchesterbeach.transport.domain.Journey;
 import com.manchesterbeach.transport.domain.Station;
+import com.manchesterbeach.transport.repo.CrudRepo;
 import com.manchesterbeach.transport.repo.JourneyRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +11,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -20,7 +20,7 @@ public class JourneyService {
     private RestTemplate restTemplate;
 
     @Autowired
-    private JourneyRepo journeyRepo;
+    private CrudRepo<Journey> journeyRepo;
 
     @Autowired
     private StationService stationService;
@@ -35,24 +35,24 @@ public class JourneyService {
             return ResponseEntity.badRequest().build();
         }
 
-        journeyRepo.addNewJourney(new Journey(originStation, destinationStation));
-        System.out.println("Journey added, count is now: " + journeyRepo.getJourneyListSize());
+        journeyRepo.save(new Journey(originStation, destinationStation));
+        System.out.println("Journey added, count is now: " + journeyRepo.count());
 
         return ResponseEntity.created(uri).build();
     }
 
     public List<Journey> getAllJourneys() {
-        return journeyRepo.getJourneyList();
+        return journeyRepo.findAll();
     }
 
     public ResponseEntity deleteJourney(int journeyIndex) {
-        Journey journeyToDelete = journeyRepo.getJourneyByIndex(journeyIndex);
+        Journey journeyToDelete = journeyRepo.findById(Long.valueOf(journeyIndex));
 
         if(journeyToDelete == null){
             return ResponseEntity.badRequest().build();
         }
 
-        return journeyRepo.deleteJourney(journeyToDelete);
+        return journeyRepo.delete(journeyToDelete);
 
     }
 }

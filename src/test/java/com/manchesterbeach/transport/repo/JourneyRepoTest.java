@@ -39,11 +39,11 @@ public class JourneyRepoTest {
 
     @Test
     public void countShouldReturnCorrectValue(){
-        when(journeyRepo.getJourneyListSize()).thenReturn(journeyList.size());
+        when(journeyRepo.count()).thenReturn(journeyList.size());
 
         int expectedCount = 3;
 
-        assertThat(journeyRepo.getJourneyListSize()).isEqualTo(expectedCount);
+        assertThat(journeyRepo.count()).isEqualTo(expectedCount);
     }
 
 }
