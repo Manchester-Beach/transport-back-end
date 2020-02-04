@@ -1,0 +1,38 @@
+{
+  "departures": [
+    {
+      "id": "19gAC6AnM4Or/BKNchbeMQ==",
+      "origin": {
+        "crs": "BYM",
+        "name": "Burnley Manchester Road",
+        "scheduled": "15:38",
+        "estimated": "-1:58"
+      },
+      "destination": {
+        "crs": "MCV",
+        "name": "Manchester Victoria",
+        "scheduled": "16:26",
+        "estimated": "16:26"
+      },
+      "isCancelled": true,
+      "platform": ""
+    },
+    {
+      "id": "Brecnr18PoMT8zCLLAMx0w==",
+      "origin": {
+        "crs": "BYM",
+        "name": "Burnley Manchester Road",
+        "scheduled": "16:36",
+        "estimated": "16:36"
+      },
+      "destination": {
+        "crs": "MCV",
+        "name": "Manchester Victoria",
+        "scheduled": "17:24",
+        "estimated": "17:24"
+      },
+      "isCancelled": false,
+      "platform": "2"
+    }
+  ]
+}

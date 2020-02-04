@@ -30,39 +30,48 @@ public class ScheduledJourneyService {
         return jsonResponseAsJourney(response.getBody(), journeyIndex);
     }
 
+    public ScheduledJourney jsonResponseAsJourney(String json) {
+        return this.jsonResponseAsJourney(json, 0);
+    }
+
     public ScheduledJourney jsonResponseAsJourney(String json, int journeyIndex){
-        Gson g = new Gson();
+        try {
+            Gson g = new Gson();
 
-        JsonElement jelement = g.fromJson(json, JsonElement.class);
-        JsonObject jobject = jelement.getAsJsonObject();
-        JsonArray jarray = jobject.getAsJsonArray("departures");
+            JsonElement jelement = g.fromJson(json, JsonElement.class);
+            JsonObject jobject = jelement.getAsJsonObject();
+            JsonArray jarray = jobject.getAsJsonArray("departures");
 
-        if(jarray.size() <= 0){
+            if(jarray.size() <= 0){
+                return null;
+            }
+
+            if(journeyIndex >= jarray.size()){
+                return null;
+            }
+
+            jobject = jarray.get(journeyIndex).getAsJsonObject();
+
+            JsonObject originStation = jobject.getAsJsonObject("origin");
+            String originStn = originStation.get("name").getAsString();
+            String originStnCrs = originStation.get("crs").getAsString();
+            String intendedTime = originStation.get("scheduled").getAsString();
+            String estimatedTime = originStation.get("estimated").getAsString();
+
+            JsonObject destStation = jobject.getAsJsonObject("destination");
+            String destStn = destStation.get("name").getAsString();
+            String destStnCrs = destStation.get("crs").getAsString();
+            String estimatedArrival = destStation.get("scheduled").getAsString();
+            String platformNo = jobject.get("platform").getAsString();
+            Boolean cancelled = jobject.get("isCancelled").getAsBoolean();
+
+            Station origin = new Station(originStnCrs, originStn, 0, 0);
+            Station destination = new Station(destStnCrs, destStn, 0, 0);
+
+            return new ScheduledJourney(origin, destination, platformNo, intendedTime, estimatedTime, estimatedArrival, cancelled);
+        }
+        catch(Exception exception) {
             return null;
         }
-
-        if(journeyIndex >= jarray.size()){
-            return null;
-        }
-
-        jobject = jarray.get(journeyIndex).getAsJsonObject();
-
-        JsonObject originStation = jobject.getAsJsonObject("origin");
-        String originStn = originStation.get("name").getAsString();
-        String originStnCrs = originStation.get("crs").getAsString();
-        String intendedTime = originStation.get("scheduled").getAsString();
-        String estimatedTime = originStation.get("estimated").getAsString();
-
-        JsonObject destStation = jobject.getAsJsonObject("destination");
-        String destStn = destStation.get("name").getAsString();
-        String destStnCrs = destStation.get("crs").getAsString();
-        String estimatedArrival = destStation.get("scheduled").getAsString();
-        String platformNo = jobject.get("platform").getAsString();
-        Boolean cancelled = jobject.get("isCancelled").getAsBoolean();
-
-        Station origin = new Station(originStnCrs, originStn, 0, 0);
-        Station destination = new Station(destStnCrs, destStn, 0, 0);
-
-        return new ScheduledJourney(origin, destination, platformNo, intendedTime, estimatedTime, estimatedArrival, cancelled);
     }
 }
