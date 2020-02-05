@@ -1,5 +1,6 @@
 package com.manchesterbeach.transport.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.manchesterbeach.transport.domain.ScheduledJourney;
 import com.manchesterbeach.transport.domain.Station;
@@ -49,4 +50,24 @@ public class ScheduledJourneyControllerTest {
         verifyNoMoreInteractions(scheduledJourneyService);
         assertThat(response).isEqualTo(journeyJSON);
     }
+
+    @Test
+    public void shouldReturnEmptyResponseWhenGetJourneyDetailsReturnsNull() throws Exception {
+        // given
+        String uri = "/scheduledJourneys/MCV/BYM/0";
+        Station departureStation = new Station("MCV", "Manchester Victoria", 0, 0);
+        Station arrivalStation = new Station("BYM", "Burnley Manchester Road", 0, 0);
+        when(scheduledJourneyService.getJourneyDetails(departureStation, arrivalStation, 0)).thenReturn(null);
+        when(stationService.getOneStation("MCV")).thenReturn(departureStation);
+        when(stationService.getOneStation("BYM")).thenReturn(arrivalStation);
+        // when
+        String response = mockMvc.perform(get(uri)).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+        // then
+        verify(scheduledJourneyService).getJourneyDetails(departureStation, arrivalStation, 0);
+        verifyNoMoreInteractions(scheduledJourneyService);
+        assertThat(response).isEqualTo("{}");
+    }
+
+    // test if get one station returns null
+
 }
