@@ -32,21 +32,36 @@ class ScheduledJourneyServiceTest {
     ScheduledJourneyService scheduledJourneyService;
 
     @Test
-    public void shouldGetScheduledJourneyDetailsFromStations() {
-        //given
-        ScheduledJourneyService mockService = spy(scheduledJourneyService);
-        Station originStation = new Station("LIV", "Liverpool Lime Street", 0, 0);
-        Station destinationStation = new Station("MCV", "Manchester Victoria", 0, 0);
-        String url = String.format("https://trains.mcrlab.co.uk/next/%s/%s", originStation.getId(), destinationStation.getId());
-        ScheduledJourney scheduledJourney = new ScheduledJourney(originStation, destinationStation, "5", "17:04", "17:24", "18:00", false);
-        when(restTemplate.getForEntity(url, String.class)).thenReturn(new ResponseEntity<>("", HttpStatus.OK));
-        doReturn(scheduledJourney).when(mockService).jsonResponseAsJourney(anyString(), anyInt());
+    public void shouldGetScheduledJourneyDetails() throws IOException {
+        String JSON = new String(Files.readAllBytes(Paths.get("./src/test/mocks/ScheduledJourneyResponse.json")));
+        when(restTemplate.getForEntity("https://trains.mcrlab.co.uk/next/BYM/MCV", String.class)).thenReturn(new ResponseEntity<>(JSON, HttpStatus.OK));
+        ScheduledJourney expectedScheduledJourney = new ScheduledJourney(new Station("BYM", "Burnley Manchester Road", 0, 0), new Station("MCV", "Manchester Victoria", 0, 0), "", "15:38", "-1:58", "16:26", true);
+        ScheduledJourney actualScheduledJourney = scheduledJourneyService.getJourneyDetails(new Station("BYM", "Burnley Manchester Road", 0, 0), new Station("MCV", "Manchester Victoria", 0, 0), 0);
+        assertThat(actualScheduledJourney).isEqualTo(expectedScheduledJourney);
+    }
 
-        //when
-        ScheduledJourney response = mockService.getJourneyDetails(originStation, destinationStation, 0);
+    @Test
+    public void shouldReturnFirstDepartureIfJourneyIndexNotSpecified() throws IOException {
+        String JSON = new String(Files.readAllBytes(Paths.get("./src/test/mocks/ScheduledJourneyResponse.json")));
+        when(restTemplate.getForEntity("https://trains.mcrlab.co.uk/next/BYM/MCV", String.class)).thenReturn(new ResponseEntity<>(JSON, HttpStatus.OK));
+        ScheduledJourney expectedScheduledJourney = new ScheduledJourney(new Station("BYM", "Burnley Manchester Road", 0, 0), new Station("MCV", "Manchester Victoria", 0, 0), "", "15:38", "-1:58", "16:26", true);
+        ScheduledJourney actualScheduledJourney = scheduledJourneyService.getJourneyDetails(new Station("BYM", "Burnley Manchester Road", 0, 0), new Station("MCV", "Manchester Victoria", 0, 0));
+        assertThat(actualScheduledJourney).isEqualTo(expectedScheduledJourney);
+    }
 
-        //then
-        assertThat(response).isEqualTo(scheduledJourney);
+    @Test
+    public void shouldReturnNullForServiceError() {
+        when(restTemplate.getForEntity("https://trains.mcrlab.co.uk/next/BYM/MCV", String.class)).thenReturn(new ResponseEntity<>("", HttpStatus.INTERNAL_SERVER_ERROR));
+        ScheduledJourney actualScheduledJourney = scheduledJourneyService.getJourneyDetails(new Station("BYM", "Burnley Manchester Road", 0, 0), new Station("MCV", "Manchester Victoria", 0, 0), 0);
+        assertThat(actualScheduledJourney).isEqualTo(null);
+    }
+
+    @Test
+    public void shouldReturnNullForNullStationParameter() {
+        ScheduledJourney actualScheduledJourney = scheduledJourneyService.getJourneyDetails(new Station("BYM", "Burnley Manchester Road", 0, 0), null, 0);
+        assertThat(actualScheduledJourney).isEqualTo(null);
+        actualScheduledJourney = scheduledJourneyService.getJourneyDetails(null, new Station("BYM", "Burnley Manchester Road", 0, 0), 0);
+        assertThat(actualScheduledJourney).isEqualTo(null);
     }
 
     @Test
@@ -79,5 +94,4 @@ class ScheduledJourneyServiceTest {
         ScheduledJourney actualScheduledJourney = scheduledJourneyService.jsonResponseAsJourney(JSON);
         assertThat(actualScheduledJourney).isEqualTo(expectedScheduledJourney);
     }
-
 }

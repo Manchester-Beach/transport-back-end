@@ -18,16 +18,24 @@ public class ScheduledJourneyService {
     @Autowired
     RestTemplate restTemplate;
 
+    public ScheduledJourney getJourneyDetails(Station departureStation, Station arrivalStation) {
+        return this.getJourneyDetails(departureStation, arrivalStation, 0);
+    }
+
     public ScheduledJourney getJourneyDetails(Station departureStation, Station arrivalStation, int journeyIndex) {
-        String url = String.format("https://trains.mcrlab.co.uk/next/%s/%s", departureStation.getId(), arrivalStation.getId());
-        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-        if (response.getStatusCode() != HttpStatus.OK) {
-            System.out.println("There's a problem: " + response.getStatusCode());
+        try {
+            String url = String.format("https://trains.mcrlab.co.uk/next/%s/%s", departureStation.getId(), arrivalStation.getId());
+            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+            if (response.getStatusCode() != HttpStatus.OK) {
+                System.out.println("There's a problem: " + response.getStatusCode());
+                return null;
+            }
+            //journey index is the (n - 1)th journey to retrieve,
+            return jsonResponseAsJourney(response.getBody(), journeyIndex);
+        }
+        catch (Exception exception) {
             return null;
         }
-
-        //journey index is the (n - 1)th journey to retrieve,
-        return jsonResponseAsJourney(response.getBody(), journeyIndex);
     }
 
     public ScheduledJourney jsonResponseAsJourney(String json) {
