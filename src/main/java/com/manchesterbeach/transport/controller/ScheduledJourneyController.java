@@ -27,6 +27,11 @@ public class ScheduledJourneyController {
     @Autowired
     ObjectMapper objectMapper;
 
+    @GetMapping(value = "/scheduledJourneys/{origin}/{destination}")
+    public ResponseEntity getScheduledJourneyWithoutIndex(@PathVariable("origin") String origin, @PathVariable("destination") String destination) {
+        return getScheduledJourney(origin, destination, 0);
+    }
+
     @GetMapping(value="/scheduledJourneys/{origin}/{destination}/{index}")
     public ResponseEntity getScheduledJourney(@PathVariable("origin") String origin,
                                               @PathVariable("destination") String destination,

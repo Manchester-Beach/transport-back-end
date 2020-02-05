@@ -1,13 +1,11 @@
 package com.manchesterbeach.transport.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.manchesterbeach.transport.domain.ScheduledJourney;
 import com.manchesterbeach.transport.domain.Station;
 import com.manchesterbeach.transport.service.ScheduledJourneyService;
 import com.manchesterbeach.transport.service.StationService;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -68,6 +66,39 @@ public class ScheduledJourneyControllerTest {
         assertThat(response).isEqualTo("{}");
     }
 
-    // test if get one station returns null
+    @Test
+    public void shouldReturnNullForInvalidStations() throws Exception {
+        // given
+        String uri = "/scheduledJourneys/MCV/BYM/0";
+        Station departureStation = null;
+        Station arrivalStation = new Station("BYM", "Burnley Manchester Road", 0, 0);
+        when(stationService.getOneStation("MCV")).thenReturn(departureStation);
+        when(stationService.getOneStation("BYM")).thenReturn(arrivalStation);
+        // when
+        String response = mockMvc.perform(get(uri)).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+        // then
+        verify(scheduledJourneyService).getJourneyDetails(departureStation, arrivalStation, 0);
+        verifyNoMoreInteractions(scheduledJourneyService);
+        assertThat(response).isEqualTo("{}");
+    }
+
+    @Test
+    public void shouldDefaultToFirstJourneyIfIndexNotSpecified() throws Exception {
+        // given
+        String uri = "/scheduledJourneys/MCV/BYM";
+        Station departureStation = new Station("MCV", "Manchester Victoria", 0, 0);
+        Station arrivalStation = new Station("BYM", "Burnley Manchester Road", 0, 0);
+        ScheduledJourney scheduledJourney = new ScheduledJourney(departureStation, arrivalStation, "17:04", "17:24", "6", "17:51", false);
+        when(scheduledJourneyService.getJourneyDetails(departureStation, arrivalStation, 0)).thenReturn(scheduledJourney);
+        when(stationService.getOneStation("MCV")).thenReturn(departureStation);
+        when(stationService.getOneStation("BYM")).thenReturn(arrivalStation);
+        String journeyJSON = objectMapper.writeValueAsString(scheduledJourney);
+        // when
+        String response = mockMvc.perform(get(uri)).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+        // then
+        verify(scheduledJourneyService).getJourneyDetails(departureStation, arrivalStation, 0);
+        verifyNoMoreInteractions(scheduledJourneyService);
+        assertThat(response).isEqualTo(journeyJSON);
+    }
 
 }
