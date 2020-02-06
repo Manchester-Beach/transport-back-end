@@ -39,10 +39,8 @@ public class ScheduledJourneyController {
         Station originStation = stationService.getOneStation(origin);
         Station destinationStation = stationService.getOneStation(destination);
 
-        ScheduledJourney scheduledJourney = scheduledJourneyService.getJourneyDetails(originStation, destinationStation, journeyIndex);
-        if (scheduledJourney == null) {
-            return new ResponseEntity(new EmptyJsonResponse(), HttpStatus.OK);
-        }
-        return new ResponseEntity<>(scheduledJourney, HttpStatus.OK);
+        ResponseEntity scheduledJourney = scheduledJourneyService.getJourneyDetails(originStation, destinationStation, journeyIndex);
+
+        return scheduledJourney;
     }
 }

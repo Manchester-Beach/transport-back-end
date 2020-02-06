@@ -6,6 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.manchesterbeach.transport.domain.ScheduledJourney;
 import com.manchesterbeach.transport.domain.Station;
+import com.manchesterbeach.transport.utils.EmptyJsonResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,24 +19,33 @@ public class ScheduledJourneyService {
     @Autowired
     RestTemplate restTemplate;
 
-    public ScheduledJourney getJourneyDetails(Station departureStation, Station arrivalStation) {
+    public ResponseEntity getJourneyDetails(Station departureStation, Station arrivalStation) {
         return this.getJourneyDetails(departureStation, arrivalStation, 0);
     }
 
-    public ScheduledJourney getJourneyDetails(Station departureStation, Station arrivalStation, int journeyIndex) {
-        try {
-            String url = String.format("https://trains.mcrlab.co.uk/next/%s/%s", departureStation.getId(), arrivalStation.getId());
-            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-            if (response.getStatusCode() != HttpStatus.OK) {
-                System.out.println("There's a problem: " + response.getStatusCode());
-                return null;
-            }
-            //journey index is the (n - 1)th journey to retrieve,
-            return jsonResponseAsJourney(response.getBody(), journeyIndex);
+    public ResponseEntity getJourneyDetails(Station departureStation, Station arrivalStation, int journeyIndex) {
+
+        if(departureStation == null || arrivalStation == null) {
+            return new ResponseEntity("Request Error! Please report to Team Beach.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        catch (Exception exception) {
-            return null;
+
+        ScheduledJourney scheduledJourney;
+        String url = String.format("https://trains.mcrlab.co.uk/next/%s/%s", departureStation.getId(), arrivalStation.getId());
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+
+        if (response.getStatusCode() != HttpStatus.OK) {
+            System.out.println("There's a problem: " + response.getStatusCode());
+            return new ResponseEntity("Internal server error! Please report to Team Beach.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
+        //journey index is the (n - 1)th journey to retrieve,
+        scheduledJourney = jsonResponseAsJourney(response.getBody(), journeyIndex);
+
+        if(scheduledJourney == null)
+        {
+            return new ResponseEntity("No direct trains available!", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return new ResponseEntity<>(scheduledJourney, HttpStatus.OK);
     }
 
     public ScheduledJourney jsonResponseAsJourney(String json) {

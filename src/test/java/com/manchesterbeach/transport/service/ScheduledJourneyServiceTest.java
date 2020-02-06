@@ -36,7 +36,7 @@ class ScheduledJourneyServiceTest {
         String JSON = new String(Files.readAllBytes(Paths.get("./src/test/mocks/ScheduledJourneyResponse.json")));
         when(restTemplate.getForEntity("https://trains.mcrlab.co.uk/next/BYM/MCV", String.class)).thenReturn(new ResponseEntity<>(JSON, HttpStatus.OK));
         ScheduledJourney expectedScheduledJourney = new ScheduledJourney(new Station("BYM", "Burnley Manchester Road", 0, 0), new Station("MCV", "Manchester Victoria", 0, 0), "", "15:38", "-1:58", "16:26", true);
-        ScheduledJourney actualScheduledJourney = scheduledJourneyService.getJourneyDetails(new Station("BYM", "Burnley Manchester Road", 0, 0), new Station("MCV", "Manchester Victoria", 0, 0), 0);
+        ScheduledJourney actualScheduledJourney = (ScheduledJourney)scheduledJourneyService.getJourneyDetails(new Station("BYM", "Burnley Manchester Road", 0, 0), new Station("MCV", "Manchester Victoria", 0, 0), 0).getBody();
         assertThat(actualScheduledJourney).isEqualTo(expectedScheduledJourney);
     }
 
@@ -45,23 +45,29 @@ class ScheduledJourneyServiceTest {
         String JSON = new String(Files.readAllBytes(Paths.get("./src/test/mocks/ScheduledJourneyResponse.json")));
         when(restTemplate.getForEntity("https://trains.mcrlab.co.uk/next/BYM/MCV", String.class)).thenReturn(new ResponseEntity<>(JSON, HttpStatus.OK));
         ScheduledJourney expectedScheduledJourney = new ScheduledJourney(new Station("BYM", "Burnley Manchester Road", 0, 0), new Station("MCV", "Manchester Victoria", 0, 0), "", "15:38", "-1:58", "16:26", true);
-        ScheduledJourney actualScheduledJourney = scheduledJourneyService.getJourneyDetails(new Station("BYM", "Burnley Manchester Road", 0, 0), new Station("MCV", "Manchester Victoria", 0, 0));
+        ScheduledJourney actualScheduledJourney = (ScheduledJourney)scheduledJourneyService.getJourneyDetails(new Station("BYM", "Burnley Manchester Road", 0, 0), new Station("MCV", "Manchester Victoria", 0, 0)).getBody();
         assertThat(actualScheduledJourney).isEqualTo(expectedScheduledJourney);
     }
 
     @Test
-    public void shouldReturnNullForServiceError() {
+    public void shouldReturnMessageForServiceError() {
         when(restTemplate.getForEntity("https://trains.mcrlab.co.uk/next/BYM/MCV", String.class)).thenReturn(new ResponseEntity<>("", HttpStatus.INTERNAL_SERVER_ERROR));
-        ScheduledJourney actualScheduledJourney = scheduledJourneyService.getJourneyDetails(new Station("BYM", "Burnley Manchester Road", 0, 0), new Station("MCV", "Manchester Victoria", 0, 0), 0);
-        assertThat(actualScheduledJourney).isEqualTo(null);
+        String errorMessage = (String)scheduledJourneyService.getJourneyDetails(new Station("BYM", "Burnley Manchester Road", 0, 0), new Station("MCV", "Manchester Victoria", 0, 0), 0).getBody();
+        assertThat(errorMessage).isEqualTo("Internal server error! Please report to Team Beach.");
+    }
+
+    @Test void shouldReturnMessageForNoJourneys() {
+        when(restTemplate.getForEntity("https://trains.mcrlab.co.uk/next/BYM/MCV", String.class)).thenReturn(new ResponseEntity<>("{}", HttpStatus.OK));
+        String errorMessage = (String)scheduledJourneyService.getJourneyDetails(new Station("BYM", "Burnley Manchester Road", 0, 0), new Station("MCV", "Manchester Victoria", 0, 0), 0).getBody();
+        assertThat(errorMessage).isEqualTo("No direct trains available!");
     }
 
     @Test
-    public void shouldReturnNullForNullStationParameter() {
-        ScheduledJourney actualScheduledJourney = scheduledJourneyService.getJourneyDetails(new Station("BYM", "Burnley Manchester Road", 0, 0), null, 0);
-        assertThat(actualScheduledJourney).isEqualTo(null);
-        actualScheduledJourney = scheduledJourneyService.getJourneyDetails(null, new Station("BYM", "Burnley Manchester Road", 0, 0), 0);
-        assertThat(actualScheduledJourney).isEqualTo(null);
+    public void shouldReturnMessageForNullStationParameter() {
+        String errorMessage = (String) scheduledJourneyService.getJourneyDetails(new Station("BYM", "Burnley Manchester Road", 0, 0), null, 0).getBody();
+        assertThat(errorMessage).isEqualTo("Request Error! Please report to Team Beach.");
+        errorMessage = (String) scheduledJourneyService.getJourneyDetails(null, new Station("BYM", "Burnley Manchester Road", 0, 0), 0).getBody();
+        assertThat(errorMessage).isEqualTo("Request Error! Please report to Team Beach.");
     }
 
     @Test

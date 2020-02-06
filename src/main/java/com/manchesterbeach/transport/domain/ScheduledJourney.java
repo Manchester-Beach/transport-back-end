@@ -17,5 +17,4 @@ public class ScheduledJourney {
     private String expectedDeparture;
     private String arrivalTime;
     private Boolean cancelled;
-
 }

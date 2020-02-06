@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -37,7 +39,7 @@ public class ScheduledJourneyControllerTest {
         Station departureStation = new Station("MCV", "Manchester Victoria", 0, 0);
         Station arrivalStation = new Station("BYM", "Burnley Manchester Road", 0, 0);
         ScheduledJourney scheduledJourney = new ScheduledJourney(departureStation, arrivalStation, "17:04", "17:24", "6", "17:51", false);
-        when(scheduledJourneyService.getJourneyDetails(departureStation, arrivalStation, 0)).thenReturn(scheduledJourney);
+        when(scheduledJourneyService.getJourneyDetails(departureStation, arrivalStation, 0)).thenReturn(new ResponseEntity(scheduledJourney, HttpStatus.OK));
         when(stationService.getOneStation("MCV")).thenReturn(departureStation);
         when(stationService.getOneStation("BYM")).thenReturn(arrivalStation);
         String journeyJSON = objectMapper.writeValueAsString(scheduledJourney);
@@ -63,7 +65,7 @@ public class ScheduledJourneyControllerTest {
         // then
         verify(scheduledJourneyService).getJourneyDetails(departureStation, arrivalStation, 0);
         verifyNoMoreInteractions(scheduledJourneyService);
-        assertThat(response).isEqualTo("{}");
+        assertThat(response).isEqualTo("");
     }
 
     @Test
@@ -79,7 +81,7 @@ public class ScheduledJourneyControllerTest {
         // then
         verify(scheduledJourneyService).getJourneyDetails(departureStation, arrivalStation, 0);
         verifyNoMoreInteractions(scheduledJourneyService);
-        assertThat(response).isEqualTo("{}");
+        assertThat(response).isEqualTo("");
     }
 
     @Test
@@ -89,7 +91,7 @@ public class ScheduledJourneyControllerTest {
         Station departureStation = new Station("MCV", "Manchester Victoria", 0, 0);
         Station arrivalStation = new Station("BYM", "Burnley Manchester Road", 0, 0);
         ScheduledJourney scheduledJourney = new ScheduledJourney(departureStation, arrivalStation, "17:04", "17:24", "6", "17:51", false);
-        when(scheduledJourneyService.getJourneyDetails(departureStation, arrivalStation, 0)).thenReturn(scheduledJourney);
+        when(scheduledJourneyService.getJourneyDetails(departureStation, arrivalStation, 0)).thenReturn(new ResponseEntity(scheduledJourney, HttpStatus.OK));
         when(stationService.getOneStation("MCV")).thenReturn(departureStation);
         when(stationService.getOneStation("BYM")).thenReturn(arrivalStation);
         String journeyJSON = objectMapper.writeValueAsString(scheduledJourney);
