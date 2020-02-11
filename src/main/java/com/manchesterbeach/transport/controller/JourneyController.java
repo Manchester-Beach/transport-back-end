@@ -23,11 +23,7 @@ public class JourneyController {
 
     @PostMapping(value = "/journeys", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> addJourney(@RequestBody Map<String, String> json) throws URISyntaxException {
-        ResponseEntity response = journeyService.saveJourney(json.get("origin"), json.get("destination"));
-        URI uri = new URI("/journeys");
-
-        return response.getStatusCode() == HttpStatus.CREATED ?
-                ResponseEntity.created(uri).build() : ResponseEntity.badRequest().build();
+        return journeyService.saveJourney(json.get("origin"), json.get("destination"));
     }
 
     @GetMapping(value = "/journeys", produces = MediaType.APPLICATION_JSON_VALUE)

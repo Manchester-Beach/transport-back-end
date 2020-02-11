@@ -19,11 +19,14 @@ public class JourneyService {
     @Autowired
     private RestTemplate restTemplate;
 
-    @Autowired
     private CrudRepo<Journey> journeyRepo;
 
-    @Autowired
     private StationService stationService;
+
+    JourneyService(StationService stationService, CrudRepo<Journey> journeyRepo) {
+        this.stationService = stationService;
+        this.journeyRepo = journeyRepo;
+    }
 
     public ResponseEntity saveJourney(String originCrs, String destinationCrs) throws URISyntaxException {
         URI uri = new URI("/journeys");
@@ -35,8 +38,13 @@ public class JourneyService {
             return ResponseEntity.badRequest().build();
         }
 
-        journeyRepo.save(new Journey(originStation, destinationStation));
-        System.out.println("Journey added, count is now: " + journeyRepo.count());
+        if(journeyRepo.findAll().contains(new Journey(originStation, destinationStation))) {
+            return ResponseEntity.ok().build();
+        }
+        else {
+            journeyRepo.save(new Journey(originStation, destinationStation));
+            System.out.println("Journey added, count is now: " + journeyRepo.count());
+        }
 
         return ResponseEntity.created(uri).build();
     }
