@@ -28,8 +28,13 @@ public class ScheduledJourneyController {
     ObjectMapper objectMapper;
 
     @GetMapping(value = "/scheduledJourneys/{origin}/{destination}")
-    public ResponseEntity getScheduledJourneyWithoutIndex(@PathVariable("origin") String origin, @PathVariable("destination") String destination) {
-        return getScheduledJourney(origin, destination, 0);
+    public ResponseEntity getAllScheduledJourneys(@PathVariable("origin") String origin, @PathVariable("destination") String destination) {
+        Station originStation = stationService.getOneStation(origin);
+        Station destinationStation = stationService.getOneStation(destination);
+
+        ResponseEntity scheduledJourneys = scheduledJourneyService.getAllJourneyDetails(originStation, destinationStation);
+
+        return scheduledJourneys;
     }
 
     @GetMapping(value="/scheduledJourneys/{origin}/{destination}/{index}")

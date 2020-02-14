@@ -85,22 +85,63 @@ public class ScheduledJourneyControllerTest {
     }
 
     @Test
-    public void shouldDefaultToFirstJourneyIfIndexNotSpecified() throws Exception {
+    public void shouldGetAllJourneysIfIndexNotSpecified() throws Exception {
+        // given
+        String uri = "/scheduledJourneys/MCV/LDS";
+        Station departureStation = new Station("MCV", "Manchester Victoria", 0, 0);
+        Station arrivalStation = new Station("LDS", "Leeds", 0, 0);
+        //ScheduledJourney scheduledJourney = new ScheduledJourney(departureStation, arrivalStation, "17:04", "17:24", "6", "17:51", false);
+
+        ScheduledJourney expectedScheduledJourney1 = new ScheduledJourney(new Station("MCV", "Manchester Victoria", 0, 0), new Station("LDS", "Leeds", 0, 0), "4", "13:15", "13:15", "14:10", false);
+        ScheduledJourney expectedScheduledJourney2 = new ScheduledJourney(new Station("MCV", "Manchester Victoria", 0, 0), new Station("LDS", "Leeds", 0, 0), "6", "13:20", "13:20", "14:42", false);
+        ScheduledJourney expectedScheduledJourney3 = new ScheduledJourney(new Station("MCV", "Manchester Victoria", 0, 0), new Station("LDS", "Leeds", 0, 0), "4", "13:30", "13:30", "14:21", false);
+        ScheduledJourney expectedScheduledJourney4 = new ScheduledJourney(new Station("MCV", "Manchester Victoria", 0, 0), new Station("LDS", "Leeds", 0, 0), "6", "13:37", "13:37", "15:03", false);
+
+        ScheduledJourney[] expectedScheduledJourneys = {expectedScheduledJourney1, expectedScheduledJourney2, expectedScheduledJourney3, expectedScheduledJourney4};
+
+        when(scheduledJourneyService.getAllJourneyDetails(departureStation, arrivalStation)).thenReturn(new ResponseEntity(expectedScheduledJourneys, HttpStatus.OK));
+        when(stationService.getOneStation("MCV")).thenReturn(departureStation);
+        when(stationService.getOneStation("LDS")).thenReturn(arrivalStation);
+        String journeyJSON = objectMapper.writeValueAsString(expectedScheduledJourneys);
+        // when
+        String response = mockMvc.perform(get(uri)).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+        // then
+        verify(scheduledJourneyService).getAllJourneyDetails(departureStation, arrivalStation);
+        verifyNoMoreInteractions(scheduledJourneyService);
+        System.out.println("response "+ response);
+        assertThat(response).isEqualTo(journeyJSON);
+    }
+
+    @Test
+    public void getAllScheduledJourneysShouldReturnNullForInvalidStations() throws Exception {
+        // given
+        String uri = "/scheduledJourneys/MCV/BYM";
+        Station departureStation = null;
+        Station arrivalStation = new Station("BYM", "Burnley Manchester Road", 0, 0);
+        when(stationService.getOneStation("MCV")).thenReturn(departureStation);
+        when(stationService.getOneStation("BYM")).thenReturn(arrivalStation);
+        // when
+        String response = mockMvc.perform(get(uri)).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+        // then
+        verify(scheduledJourneyService).getAllJourneyDetails(departureStation, arrivalStation);
+        verifyNoMoreInteractions(scheduledJourneyService);
+        assertThat(response).isEqualTo("");
+    }
+
+    @Test
+    public void getAllScheduledJourneysShouldErrorWhenNoJourneysReturned() throws Exception {
         // given
         String uri = "/scheduledJourneys/MCV/BYM";
         Station departureStation = new Station("MCV", "Manchester Victoria", 0, 0);
         Station arrivalStation = new Station("BYM", "Burnley Manchester Road", 0, 0);
-        ScheduledJourney scheduledJourney = new ScheduledJourney(departureStation, arrivalStation, "17:04", "17:24", "6", "17:51", false);
-        when(scheduledJourneyService.getJourneyDetails(departureStation, arrivalStation, 0)).thenReturn(new ResponseEntity(scheduledJourney, HttpStatus.OK));
+        when(scheduledJourneyService.getAllJourneyDetails(departureStation, arrivalStation)).thenReturn(new ResponseEntity("No direct trains available!", HttpStatus.INTERNAL_SERVER_ERROR));
         when(stationService.getOneStation("MCV")).thenReturn(departureStation);
         when(stationService.getOneStation("BYM")).thenReturn(arrivalStation);
-        String journeyJSON = objectMapper.writeValueAsString(scheduledJourney);
         // when
-        String response = mockMvc.perform(get(uri)).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+        String response = mockMvc.perform(get(uri)).andExpect(status().is5xxServerError()).andReturn().getResponse().getContentAsString();
         // then
-        verify(scheduledJourneyService).getJourneyDetails(departureStation, arrivalStation, 0);
+        verify(scheduledJourneyService).getAllJourneyDetails(departureStation, arrivalStation);
         verifyNoMoreInteractions(scheduledJourneyService);
-        assertThat(response).isEqualTo(journeyJSON);
+        assertThat(response).isEqualTo("No direct trains available!");
     }
-
 }

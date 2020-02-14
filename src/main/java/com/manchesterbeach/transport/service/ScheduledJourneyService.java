@@ -92,4 +92,37 @@ public class ScheduledJourneyService {
             return null;
         }
     }
+
+    public ResponseEntity getAllJourneyDetails(Station departureStation, Station arrivalStation) {
+
+        if(departureStation == null || arrivalStation == null) {
+            return new ResponseEntity("Request Error! Please report to Team Beach.", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        ScheduledJourney scheduledJourney;
+        String url = String.format("https://trains.mcrlab.co.uk/next/%s/%s", departureStation.getId(), arrivalStation.getId());
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+
+        if (response.getStatusCode() != HttpStatus.OK) {
+            System.out.println("There's a problem: " + response.getStatusCode());
+            return new ResponseEntity("Internal server error! Please report to Team Beach.", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        Gson g = new Gson();
+        JsonElement jelement = g.fromJson(response.getBody(), JsonElement.class);
+        JsonObject jobject = jelement.getAsJsonObject();
+        JsonArray jarray = jobject.getAsJsonArray("departures");
+
+        if (jarray.size() == 0){
+            return new ResponseEntity("No direct trains available!", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        ScheduledJourney[] returnArray = new ScheduledJourney[jarray.size()];
+
+        for(int i = 0; i < jarray.size(); i++){
+            returnArray[i] = jsonResponseAsJourney(response.getBody(), i);
+        }
+
+        return new ResponseEntity<>(returnArray, HttpStatus.OK);
+    }
 }
