@@ -20,7 +20,7 @@ import java.util.List;
 public class DeparturesService {
     @Autowired
     private RestTemplate restTemplate;
-    public ResponseEntity getTramDepartures(String stationIdentifier) throws ParseException {
+    public ResponseEntity getTramDepartures(String stationIdentifier, int timeOffset) throws ParseException {
         String URL = "https://www.tramchester.com/api/departures/station/" + stationIdentifier;
         ResponseEntity<String> response = restTemplate.getForEntity(URL, String.class);
         if (response.getStatusCode() != HttpStatus.OK) return null;
