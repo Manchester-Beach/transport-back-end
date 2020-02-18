@@ -18,6 +18,6 @@ public class DeparturesController {
 
     @GetMapping(produces = "application/json", value = "/departures/tram/{stationIdentifier}")
     public ResponseEntity getTramDepartures(@PathVariable String stationIdentifier) throws ParseException {
-        return departuresService.getTramDepartures(stationIdentifier);
+        return departuresService.getTramDepartures(stationIdentifier, 5);
     }
 }
