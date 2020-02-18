@@ -24,16 +24,16 @@ public class DeparturesService {
         String URL = "https://www.tramchester.com/api/departures/station/" + stationIdentifier;
         ResponseEntity<String> response = restTemplate.getForEntity(URL, String.class);
         if (response.getStatusCode() != HttpStatus.OK) return null;
-        return formatResponseBody(response.getBody());
+        return formatResponseBody(response.getBody(), timeOffset);
     }
-    public ResponseEntity formatResponseBody(String responseBody) throws ParseException {
+    public ResponseEntity formatResponseBody(String responseBody, int timeOffset) throws ParseException {
         Gson gson = new Gson();
         List<TramDeparture> tramDepartures = new ArrayList<TramDeparture>();
         JSONObject responseBodyJSONObject = (JSONObject)new JSONParser().parse(responseBody);
         JSONArray departures = (JSONArray)responseBodyJSONObject.get("departures");
         for (int index = 0; index < departures.size(); index++) {
             JSONObject departure = (JSONObject)departures.get(index);
-            if ((long)departure.get("wait") >= 5) tramDepartures.add(new TramDeparture((long)departure.get("wait"), (String)departure.get("destination")));
+            if ((long)departure.get("wait") >= timeOffset) tramDepartures.add(new TramDeparture((long)departure.get("wait"), (String)departure.get("destination")));
             if(tramDepartures.size() == 3) { return new ResponseEntity(gson.toJson(tramDepartures), HttpStatus.OK); }
         }
         return new ResponseEntity(gson.toJson(tramDepartures), HttpStatus.OK);

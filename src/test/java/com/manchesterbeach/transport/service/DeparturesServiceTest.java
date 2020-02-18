@@ -32,7 +32,7 @@ public class DeparturesServiceTest {
         String stationIdentifier = "9400ZZMASHU";
         String URL = "https://www.tramchester.com/api/departures/station/" + stationIdentifier;
         when(restTemplate.getForEntity(URL, String.class)).thenReturn(new ResponseEntity(responseBody, HttpStatus.OK));
-        departuresService.getTramDepartures(stationIdentifier);
+        departuresService.getTramDepartures(stationIdentifier,5);
         verify(restTemplate, times(1)).getForEntity(URL, String.class);
     }
     @Test
@@ -40,7 +40,7 @@ public class DeparturesServiceTest {
         String stationIdentifier = "9400ZZMASHU";
         String URL = "https://www.tramchester.com/api/departures/station/" + stationIdentifier;
         when(restTemplate.getForEntity(URL, String.class)).thenReturn(new ResponseEntity(null, HttpStatus.INTERNAL_SERVER_ERROR));
-        departuresService.getTramDepartures(stationIdentifier);
+        departuresService.getTramDepartures(stationIdentifier, 5);
         verify(restTemplate, times(1)).getForEntity(URL, String.class);
     }
     @Test
@@ -52,7 +52,7 @@ public class DeparturesServiceTest {
         expectedTramDeparturesList.add(new TramDeparture(7, "Piccadilly"));
         expectedTramDeparturesList.add(new TramDeparture(9, "Victoria"));
         ResponseEntity expectedTramDepartures = new ResponseEntity(gson.toJson(expectedTramDeparturesList), HttpStatus.OK);
-        ResponseEntity actualTramDepartures = departuresService.formatResponseBody(responseBody);
+        ResponseEntity actualTramDepartures = departuresService.formatResponseBody(responseBody, 5);
         assertThat(actualTramDepartures.getBody()).isEqualTo(expectedTramDepartures.getBody());
     }
     @Test
@@ -64,7 +64,7 @@ public class DeparturesServiceTest {
         expectedTramDeparturesList.add(new TramDeparture(7, "Piccadilly"));
         expectedTramDeparturesList.add(new TramDeparture(9, "Victoria"));
         ResponseEntity expectedTramDepartures = new ResponseEntity(gson.toJson(expectedTramDeparturesList), HttpStatus.OK);
-        ResponseEntity actualTramDepartures = departuresService.formatResponseBody(responseBody);
+        ResponseEntity actualTramDepartures = departuresService.formatResponseBody(responseBody, 5);
         assertThat(actualTramDepartures.getBody()).isEqualTo(expectedTramDepartures.getBody());
     }
 }
