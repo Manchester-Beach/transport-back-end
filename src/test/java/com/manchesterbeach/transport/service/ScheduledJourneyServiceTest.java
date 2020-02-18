@@ -35,7 +35,7 @@ class ScheduledJourneyServiceTest {
     public void shouldGetScheduledJourneyDetails() throws IOException {
         String JSON = new String(Files.readAllBytes(Paths.get("./src/test/mocks/ScheduledJourneyResponse.json")));
         when(restTemplate.getForEntity("https://trains.mcrlab.co.uk/next/BYM/MCV", String.class)).thenReturn(new ResponseEntity<>(JSON, HttpStatus.OK));
-        ScheduledJourney expectedScheduledJourney = new ScheduledJourney(new Station("BYM", "Burnley Manchester Road", 0, 0), new Station("MCV", "Manchester Victoria", 0, 0), "", "15:38", "-1:58", "16:26", true);
+        ScheduledJourney expectedScheduledJourney = new ScheduledJourney(new Station("BYM", "Burnley Manchester Road", 0, 0), new Station("MCV", "Manchester Victoria", 0, 0), "", "15:38", "-1:58", "16:26", "16:26", true);
         ScheduledJourney actualScheduledJourney = (ScheduledJourney)scheduledJourneyService.getJourneyDetails(new Station("BYM", "Burnley Manchester Road", 0, 0), new Station("MCV", "Manchester Victoria", 0, 0), 0).getBody();
         assertThat(actualScheduledJourney).isEqualTo(expectedScheduledJourney);
     }
@@ -44,7 +44,7 @@ class ScheduledJourneyServiceTest {
     public void shouldReturnFirstDepartureIfJourneyIndexNotSpecified() throws IOException {
         String JSON = new String(Files.readAllBytes(Paths.get("./src/test/mocks/ScheduledJourneyResponse.json")));
         when(restTemplate.getForEntity("https://trains.mcrlab.co.uk/next/BYM/MCV", String.class)).thenReturn(new ResponseEntity<>(JSON, HttpStatus.OK));
-        ScheduledJourney expectedScheduledJourney = new ScheduledJourney(new Station("BYM", "Burnley Manchester Road", 0, 0), new Station("MCV", "Manchester Victoria", 0, 0), "", "15:38", "-1:58", "16:26", true);
+        ScheduledJourney expectedScheduledJourney = new ScheduledJourney(new Station("BYM", "Burnley Manchester Road", 0, 0), new Station("MCV", "Manchester Victoria", 0, 0), "", "15:38", "-1:58", "16:26", "16:26", true);
         ScheduledJourney actualScheduledJourney = (ScheduledJourney)scheduledJourneyService.getJourneyDetails(new Station("BYM", "Burnley Manchester Road", 0, 0), new Station("MCV", "Manchester Victoria", 0, 0)).getBody();
         assertThat(actualScheduledJourney).isEqualTo(expectedScheduledJourney);
     }
@@ -73,7 +73,7 @@ class ScheduledJourneyServiceTest {
     @Test
     public void shouldConvertJSONResponseToJourney() throws IOException {
         String JSON = new String(Files.readAllBytes(Paths.get("./src/test/mocks/ScheduledJourneyResponse.json")));
-        ScheduledJourney expectedScheduledJourney = new ScheduledJourney(new Station("BYM", "Burnley Manchester Road", 0, 0), new Station("MCV", "Manchester Victoria", 0, 0), "", "15:38", "-1:58", "16:26", true);
+        ScheduledJourney expectedScheduledJourney = new ScheduledJourney(new Station("BYM", "Burnley Manchester Road", 0, 0), new Station("MCV", "Manchester Victoria", 0, 0), "", "15:38", "-1:58", "16:26", "16:26", true);
         ScheduledJourney actualScheduledJourney = scheduledJourneyService.jsonResponseAsJourney(JSON, 0);
         assertThat(actualScheduledJourney).isEqualTo(expectedScheduledJourney);
     }
@@ -81,7 +81,7 @@ class ScheduledJourneyServiceTest {
     @Test
     public void shouldReturnSecondDepartureWhenRequested() throws IOException {
         String JSON = new String(Files.readAllBytes(Paths.get("./src/test/mocks/ScheduledJourneyResponse.json")));
-        ScheduledJourney expectedScheduledJourney = new ScheduledJourney(new Station("BYM", "Burnley Manchester Road", 0, 0), new Station("MCV", "Manchester Victoria", 0, 0), "2", "16:36", "16:36", "17:24", false);
+        ScheduledJourney expectedScheduledJourney = new ScheduledJourney(new Station("BYM", "Burnley Manchester Road", 0, 0), new Station("MCV", "Manchester Victoria", 0, 0), "2", "16:36", "16:36", "17:24", "17:24", false);
         ScheduledJourney actualScheduledJourney = scheduledJourneyService.jsonResponseAsJourney(JSON, 1);
         assertThat(actualScheduledJourney).isEqualTo(expectedScheduledJourney);
     }
@@ -96,7 +96,7 @@ class ScheduledJourneyServiceTest {
     @Test
     public void shouldDefaultToFirstDepartureIfJourneyIndexNotSpecified() throws IOException {
         String JSON = new String(Files.readAllBytes(Paths.get("./src/test/mocks/ScheduledJourneyResponse.json")));
-        ScheduledJourney expectedScheduledJourney = new ScheduledJourney(new Station("BYM", "Burnley Manchester Road", 0, 0), new Station("MCV", "Manchester Victoria", 0, 0), "", "15:38", "-1:58", "16:26", true);
+        ScheduledJourney expectedScheduledJourney = new ScheduledJourney(new Station("BYM", "Burnley Manchester Road", 0, 0), new Station("MCV", "Manchester Victoria", 0, 0), "", "15:38", "-1:58", "16:26", "16:26", true);
         ScheduledJourney actualScheduledJourney = scheduledJourneyService.jsonResponseAsJourney(JSON);
         assertThat(actualScheduledJourney).isEqualTo(expectedScheduledJourney);
     }
@@ -106,10 +106,10 @@ class ScheduledJourneyServiceTest {
         String mockResponseBody = new String(Files.readAllBytes(Paths.get("./src/test/mocks/MultipleScheduledJourneysResponse.json")));
         when(restTemplate.getForEntity("https://trains.mcrlab.co.uk/next/MCV/LDS", String.class)).thenReturn(new ResponseEntity<>(mockResponseBody, HttpStatus.OK));
 
-        ScheduledJourney expectedScheduledJourney1 = new ScheduledJourney(new Station("MCV", "Manchester Victoria", 0, 0), new Station("LDS", "Leeds", 0, 0), "4", "13:15", "13:15", "14:10", false);
-        ScheduledJourney expectedScheduledJourney2 = new ScheduledJourney(new Station("MCV", "Manchester Victoria", 0, 0), new Station("LDS", "Leeds", 0, 0), "6", "13:20", "13:20", "14:42", false);
-        ScheduledJourney expectedScheduledJourney3 = new ScheduledJourney(new Station("MCV", "Manchester Victoria", 0, 0), new Station("LDS", "Leeds", 0, 0), "4", "13:30", "13:30", "14:21", false);
-        ScheduledJourney expectedScheduledJourney4 = new ScheduledJourney(new Station("MCV", "Manchester Victoria", 0, 0), new Station("LDS", "Leeds", 0, 0), "6", "13:37", "13:37", "15:03", false);
+        ScheduledJourney expectedScheduledJourney1 = new ScheduledJourney(new Station("MCV", "Manchester Victoria", 0, 0), new Station("LDS", "Leeds", 0, 0), "4", "13:15", "13:15", "14:10", "14:10", false);
+        ScheduledJourney expectedScheduledJourney2 = new ScheduledJourney(new Station("MCV", "Manchester Victoria", 0, 0), new Station("LDS", "Leeds", 0, 0), "6", "13:20", "13:20", "14:42", "14:42", false);
+        ScheduledJourney expectedScheduledJourney3 = new ScheduledJourney(new Station("MCV", "Manchester Victoria", 0, 0), new Station("LDS", "Leeds", 0, 0), "4", "13:30", "13:30", "14:21", "14:21", false);
+        ScheduledJourney expectedScheduledJourney4 = new ScheduledJourney(new Station("MCV", "Manchester Victoria", 0, 0), new Station("LDS", "Leeds", 0, 0), "6", "13:37", "13:37", "15:03", "15:03", false);
 
         ScheduledJourney[] expectedResult = {expectedScheduledJourney1, expectedScheduledJourney2, expectedScheduledJourney3, expectedScheduledJourney4};
 

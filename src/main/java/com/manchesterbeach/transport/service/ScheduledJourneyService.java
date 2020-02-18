@@ -79,14 +79,15 @@ public class ScheduledJourneyService {
             JsonObject destStation = jobject.getAsJsonObject("destination");
             String destStn = destStation.get("name").getAsString();
             String destStnCrs = destStation.get("crs").getAsString();
-            String estimatedArrival = destStation.get("scheduled").getAsString();
+            String scheduledArrival = destStation.get("scheduled").getAsString();
+            String estimatedArrival = destStation.get("estimated").getAsString();
             String platformNo = jobject.get("platform").getAsString();
             Boolean cancelled = jobject.get("isCancelled").getAsBoolean();
 
             Station origin = new Station(originStnCrs, originStn, 0, 0);
             Station destination = new Station(destStnCrs, destStn, 0, 0);
 
-            return new ScheduledJourney(origin, destination, platformNo, intendedTime, estimatedTime, estimatedArrival, cancelled);
+            return new ScheduledJourney(origin, destination, platformNo, intendedTime, estimatedTime, scheduledArrival, estimatedArrival, cancelled);
         }
         catch(Exception exception) {
             return null;
