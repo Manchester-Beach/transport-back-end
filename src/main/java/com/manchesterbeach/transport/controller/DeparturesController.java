@@ -15,7 +15,7 @@ public class DeparturesController {
 
     @GetMapping(produces = "application/json", value = "/departures/tram/{stationIdentifier}")
     public ResponseEntity getTramDepartures(@PathVariable String stationIdentifier, @RequestParam(required = false) Integer timeOffset) throws ParseException {
-        if (timeOffset != null) {
+         if (timeOffset != null) {
             return departuresService.getTramDepartures(stationIdentifier, timeOffset.intValue());
         }
         return departuresService.getTramDepartures(stationIdentifier, 5);

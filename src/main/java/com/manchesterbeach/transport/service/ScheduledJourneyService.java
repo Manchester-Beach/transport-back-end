@@ -30,7 +30,8 @@ public class ScheduledJourneyService {
         }
 
         ScheduledJourney scheduledJourney;
-        String url = String.format("https://trains.mcrlab.co.uk/next/%s/%s", departureStation.getId(), arrivalStation.getId());
+//        String url = String.format("https://trains.mcrlab.co.uk/next/%s/%s", departureStation.getId(), arrivalStation.getId());
+        String url = String.format("https://beach-train-ldb.herokuapp.com/journeys/%s/%s", departureStation.getId(), arrivalStation.getId());
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
 
         if (response.getStatusCode() != HttpStatus.OK) {
@@ -101,7 +102,8 @@ public class ScheduledJourneyService {
         }
 
         ScheduledJourney scheduledJourney;
-        String url = String.format("https://trains.mcrlab.co.uk/next/%s/%s", departureStation.getId(), arrivalStation.getId());
+//        String url = String.format("https://trains.mcrlab.co.uk/next/%s/%s", departureStation.getId(), arrivalStation.getId());
+        String url = String.format("https://beach-train-ldb.herokuapp.com/journeys/%s/%s", departureStation.getId(), arrivalStation.getId());
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
 
         if (response.getStatusCode() != HttpStatus.OK) {

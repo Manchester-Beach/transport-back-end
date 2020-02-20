@@ -34,7 +34,7 @@ class ScheduledJourneyServiceTest {
     @Test
     public void shouldGetScheduledJourneyDetails() throws IOException {
         String JSON = new String(Files.readAllBytes(Paths.get("./src/test/mocks/ScheduledJourneyResponse.json")));
-        when(restTemplate.getForEntity("https://trains.mcrlab.co.uk/next/BYM/MCV", String.class)).thenReturn(new ResponseEntity<>(JSON, HttpStatus.OK));
+        when(restTemplate.getForEntity("https://beach-train-ldb.herokuapp.com/journeys/BYM/MCV", String.class)).thenReturn(new ResponseEntity<>(JSON, HttpStatus.OK));
         ScheduledJourney expectedScheduledJourney = new ScheduledJourney(new Station("BYM", "Burnley Manchester Road", 0, 0), new Station("MCV", "Manchester Victoria", 0, 0), "", "15:38", "-1:58", "16:26", "16:26", true);
         ScheduledJourney actualScheduledJourney = (ScheduledJourney)scheduledJourneyService.getJourneyDetails(new Station("BYM", "Burnley Manchester Road", 0, 0), new Station("MCV", "Manchester Victoria", 0, 0), 0).getBody();
         assertThat(actualScheduledJourney).isEqualTo(expectedScheduledJourney);
@@ -43,7 +43,7 @@ class ScheduledJourneyServiceTest {
     @Test
     public void shouldReturnFirstDepartureIfJourneyIndexNotSpecified() throws IOException {
         String JSON = new String(Files.readAllBytes(Paths.get("./src/test/mocks/ScheduledJourneyResponse.json")));
-        when(restTemplate.getForEntity("https://trains.mcrlab.co.uk/next/BYM/MCV", String.class)).thenReturn(new ResponseEntity<>(JSON, HttpStatus.OK));
+        when(restTemplate.getForEntity("https://beach-train-ldb.herokuapp.com/journeys/BYM/MCV", String.class)).thenReturn(new ResponseEntity<>(JSON, HttpStatus.OK));
         ScheduledJourney expectedScheduledJourney = new ScheduledJourney(new Station("BYM", "Burnley Manchester Road", 0, 0), new Station("MCV", "Manchester Victoria", 0, 0), "", "15:38", "-1:58", "16:26", "16:26", true);
         ScheduledJourney actualScheduledJourney = (ScheduledJourney)scheduledJourneyService.getJourneyDetails(new Station("BYM", "Burnley Manchester Road", 0, 0), new Station("MCV", "Manchester Victoria", 0, 0)).getBody();
         assertThat(actualScheduledJourney).isEqualTo(expectedScheduledJourney);
@@ -51,13 +51,13 @@ class ScheduledJourneyServiceTest {
 
     @Test
     public void shouldReturnMessageForServiceError() {
-        when(restTemplate.getForEntity("https://trains.mcrlab.co.uk/next/BYM/MCV", String.class)).thenReturn(new ResponseEntity<>("", HttpStatus.INTERNAL_SERVER_ERROR));
+        when(restTemplate.getForEntity("https://beach-train-ldb.herokuapp.com/journeys/BYM/MCV", String.class)).thenReturn(new ResponseEntity<>("", HttpStatus.INTERNAL_SERVER_ERROR));
         String errorMessage = (String)scheduledJourneyService.getJourneyDetails(new Station("BYM", "Burnley Manchester Road", 0, 0), new Station("MCV", "Manchester Victoria", 0, 0), 0).getBody();
         assertThat(errorMessage).isEqualTo("Internal server error! Please report to Team Beach.");
     }
 
     @Test void shouldReturnMessageForNoJourneys() {
-        when(restTemplate.getForEntity("https://trains.mcrlab.co.uk/next/BYM/MCV", String.class)).thenReturn(new ResponseEntity<>("{}", HttpStatus.OK));
+        when(restTemplate.getForEntity("https://beach-train-ldb.herokuapp.com/journeys/BYM/MCV", String.class)).thenReturn(new ResponseEntity<>("{}", HttpStatus.OK));
         String errorMessage = (String)scheduledJourneyService.getJourneyDetails(new Station("BYM", "Burnley Manchester Road", 0, 0), new Station("MCV", "Manchester Victoria", 0, 0), 0).getBody();
         assertThat(errorMessage).isEqualTo("No direct trains available!");
     }
@@ -104,7 +104,7 @@ class ScheduledJourneyServiceTest {
     @Test
     public void getAllJourneyDetailsShouldReturnAnArrayOfJourneys() throws IOException {
         String mockResponseBody = new String(Files.readAllBytes(Paths.get("./src/test/mocks/MultipleScheduledJourneysResponse.json")));
-        when(restTemplate.getForEntity("https://trains.mcrlab.co.uk/next/MCV/LDS", String.class)).thenReturn(new ResponseEntity<>(mockResponseBody, HttpStatus.OK));
+        when(restTemplate.getForEntity("https://beach-train-ldb.herokuapp.com/journeys/MCV/LDS", String.class)).thenReturn(new ResponseEntity<>(mockResponseBody, HttpStatus.OK));
 
         ScheduledJourney expectedScheduledJourney1 = new ScheduledJourney(new Station("MCV", "Manchester Victoria", 0, 0), new Station("LDS", "Leeds", 0, 0), "4", "13:15", "13:15", "14:10", "14:10", false);
         ScheduledJourney expectedScheduledJourney2 = new ScheduledJourney(new Station("MCV", "Manchester Victoria", 0, 0), new Station("LDS", "Leeds", 0, 0), "6", "13:20", "13:20", "14:42", "14:42", false);
@@ -126,7 +126,7 @@ class ScheduledJourneyServiceTest {
 
     @Test
     public void getAllJourneyDetailsShouldReturnAnErrorOnErrorFromDownstream() throws IOException {
-        when(restTemplate.getForEntity("https://trains.mcrlab.co.uk/next/MCV/LDS", String.class)).thenReturn(new ResponseEntity<>("", HttpStatus.INTERNAL_SERVER_ERROR));
+        when(restTemplate.getForEntity("https://beach-train-ldb.herokuapp.com/journeys/MCV/LDS", String.class)).thenReturn(new ResponseEntity<>("", HttpStatus.INTERNAL_SERVER_ERROR));
 
         ResponseEntity actualScheduledJourney = scheduledJourneyService.getAllJourneyDetails(new Station("MCV", "Manchester Victoria", 0, 0), new Station("LDS", "Leeds", 0, 0));
         assertThat(actualScheduledJourney.getStatusCodeValue()).isEqualTo(500);
@@ -135,7 +135,7 @@ class ScheduledJourneyServiceTest {
     @Test
     public void getAllJourneyDetailsShouldReturnAnErrorWhenNoDepartures() throws IOException {
         String mockNoTrainsResponse = "{\"departures\":[]}";
-        when(restTemplate.getForEntity("https://trains.mcrlab.co.uk/next/MCV/LDS", String.class)).thenReturn(new ResponseEntity<>(mockNoTrainsResponse, HttpStatus.OK));
+        when(restTemplate.getForEntity("https://beach-train-ldb.herokuapp.com/journeys/MCV/LDS", String.class)).thenReturn(new ResponseEntity<>(mockNoTrainsResponse, HttpStatus.OK));
 
         ResponseEntity actualScheduledJourney = scheduledJourneyService.getAllJourneyDetails(new Station("MCV", "Manchester Victoria", 0, 0), new Station("LDS", "Leeds", 0, 0));
         assertThat(actualScheduledJourney.getStatusCodeValue()).isEqualTo(500);
